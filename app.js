@@ -15,9 +15,6 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useFindAndModify: false,
 });
 
-app.use('/', userRouter);
-app.use('/', cardRouter);
-
 app.use((req, res, next) => {
   req.user = {
     _id: '613bba653ab28a5412e7262d',
@@ -25,6 +22,11 @@ app.use((req, res, next) => {
 
   next();
 });
+
+app.use('/', userRouter);
+app.use('/', cardRouter);
+
+app.use('*', (req, res) => res.status(404).send({ message: 'Cтраница не найдена' }));
 
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console

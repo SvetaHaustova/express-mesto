@@ -20,7 +20,12 @@ const getUserId = (req, res) => {
       }
       return res.status(200).send({ data: user });
     })
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return res.status(400).send({ message: 'Переданы некорректные данные пользователя' });
+      }
+      return res.status(500).send({ message: err.message });
+    });
 };
 
 const createUser = (req, res) => {
@@ -32,7 +37,12 @@ const createUser = (req, res) => {
       }
       return res.status(200).send({ data: user });
     })
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя' });
+      }
+      return res.status(500).send({ message: err.message });
+    });
 };
 
 const updateUserProfile = (req, res) => {
