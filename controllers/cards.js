@@ -7,10 +7,7 @@ const ForbiddenError = require('../errors/forbidden-error');
 const getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => {
-      if (!cards) {
-        throw new BadReqError('Переданы некорректные данные при создании карточки');
-      }
-      return res.status(200).send({ data: cards });
+      res.status(200).send({ data: cards });
     })
     .catch((err) => next(err));
 };
@@ -37,8 +34,8 @@ const deleteCard = (req, res, next) => {
       if (req.user._id !== String(card.owner)) {
         throw new ForbiddenError('Нельзя удалять чужие карточки!');
       }
-      card.remove();
-      return res.status(200).send({ message: 'Карточка удалена' });
+      return card.remove()
+        .then(() => res.status(200).send({ message: 'Карточка удалена' }));
     })
     .catch((err) => {
       if (err.name === 'CastError') {

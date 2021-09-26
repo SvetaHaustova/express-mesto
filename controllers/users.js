@@ -6,14 +6,12 @@ const NotFoundError = require('../errors/not-found-error');
 const BadReqError = require('../errors/bad-req-error');
 const ConflictError = require('../errors/conflict-error');
 const UnAuthError = require('../errors/unauth-error');
+const SECRET_CODE = require('../utils/config');
 
 const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => {
-      if (!users) {
-        throw new NotFoundError('Переданы некорректные данные при создании пользователя');
-      }
-      return res.status(200).send({ data: users });
+      res.status(200).send({ data: users });
     })
     .catch((err) => next(err));
 };
@@ -32,7 +30,7 @@ const getInfoAboutUser = (req, res, next) => {
       }
       next(err);
     });
-}
+};
 
 const getUserId = (req, res, next) => {
   User.findById(req.params.userId)
@@ -51,18 +49,37 @@ const getUserId = (req, res, next) => {
 };
 
 const createUser = (req, res, next) => {
-  const { name, about, avatar, email, password } = req.body;
+  const {
+    name,
+    about,
+    avatar,
+    email,
+    password,
+  } = req.body;
   bcrypt.hash(password, 10)
     .then((hash) => {
-      User.create({ name, about, avatar, email, password: hash })
+      User.create({
+        name,
+        about,
+        avatar,
+        email,
+        password: hash,
+      })
         .then((user) => {
           if (!user) {
             throw new BadReqError('Переданы некорректные данные при создании пользователя');
           }
-          return res.status(200).send({ data: { name, about, avatar, email } });
+          return res.status(200).send({
+            data: {
+              name,
+              about,
+              avatar,
+              email,
+            },
+          });
         })
         .catch((err) => {
-          if (err.name === "MongoError" && err.name === 11000) {
+          if (err.name === 'MongoServerError' && err.code === 11000) {
             next(new ConflictError('Пользователь с такими данными уже зарегистрирован!'));
           }
           if (err.name === 'ValidationError') {
@@ -124,16 +141,19 @@ const login = (req, res, next) => {
       if (!user) {
         throw new UnAuthError('Неправильные почта или пароль');
       }
-      return bcrypt.compare(password, user.password);
+      return bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) {
+            throw new UnAuthError('Неправильные почта или пароль');
+          }
+          return user;
+        });
     })
-    .then((matched) => {
-      if (!matched) {
-        throw new UnAuthError('Неправильные почта или пароль');
-      }
-      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, SECRET_CODE, { expiresIn: '7d' });
       res.cookie('jwt', token, {
         maxAge: 3600000 * 24,
-        httpOnly: true
+        httpOnly: true,
       })
         .status(200).send({ message: 'Успешная авторизация!' });
     })
@@ -147,5 +167,5 @@ module.exports = {
   createUser,
   updateUserProfile,
   updateUserAvatar,
-  login
+  login,
 };
