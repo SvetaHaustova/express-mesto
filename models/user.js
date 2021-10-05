@@ -18,7 +18,8 @@ const userSchema = new mongoose.Schema({
   },
   avatar: {
     type: String,
-    default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
+    // eslint-disable-next-line spaced-comment
+    //default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     validate: {
       validator: (v) => regex.test(v),
       message: 'Некорректный формат ссылки',
