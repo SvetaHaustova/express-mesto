@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const { celebrate, Joi, errors } = require('celebrate');
+
 const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
@@ -10,12 +11,14 @@ const auth = require('./middlewares/auth');
 const NotFoundError = require('./errors/not-found-error');
 const regex = require('./utils/regex');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const corsMiddleware = require('./middlewares/cors');
 
 const { PORT = 3000 } = process.env;
 const app = express();
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
+app.use(corsMiddleware);
 app.use(requestLogger);
 app.use(express.json());
 app.use(cookieParser());
