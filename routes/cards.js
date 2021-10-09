@@ -1,7 +1,8 @@
+/* eslint-disable spaced-comment */
 /* eslint-disable linebreak-style */
 const cardRouter = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
-const regex = require('../utils/regex');
+//const regex = require('../utils/regex');
 const {
   getCards,
   createCard,
@@ -15,7 +16,8 @@ cardRouter.get('/cards', getCards);
 cardRouter.post('/cards', celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
-    link: Joi.string().required().pattern(regex),
+    link: Joi.string().required(),
+    //link: Joi.string().required().pattern(regex),
   }),
 }), createCard);
 

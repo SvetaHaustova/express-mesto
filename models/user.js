@@ -1,7 +1,8 @@
+/* eslint-disable spaced-comment */
 /* eslint-disable linebreak-style */
 const mongoose = require('mongoose');
 const isEmail = require('validator/lib/isEmail');
-const regex = require('../utils/regex');
+//const regex = require('../utils/regex');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -18,12 +19,11 @@ const userSchema = new mongoose.Schema({
   },
   avatar: {
     type: String,
-    // eslint-disable-next-line spaced-comment
     //default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
-    validate: {
-      validator: (v) => regex.test(v),
-      message: 'Некорректный формат ссылки',
-    },
+    //validate: {
+    //  validator: (v) => regex.test(v),
+    //  message: 'Некорректный формат ссылки',
+    //},
   },
   email: {
     type: String,
