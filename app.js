@@ -9,7 +9,7 @@ const cardRouter = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const NotFoundError = require('./errors/not-found-error');
-const regex = require('./utils/regex');
+//const regex = require('./utils/regex');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const corsMiddleware = require('./middlewares/cors');
 
@@ -34,7 +34,8 @@ app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().default('Жак-Ив Кусто').min(2).max(30),
     about: Joi.string().default('Исследователь').min(2).max(30),
-    avatar: Joi.string().pattern(regex),
+    //avatar: Joi.string().pattern(regex),
+    avatar: Joi.string(),
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
   }),

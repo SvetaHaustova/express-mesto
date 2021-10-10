@@ -1,7 +1,8 @@
+/* eslint-disable spaced-comment */
 /* eslint-disable linebreak-style */
 const userRouter = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
-const regex = require('../utils/regex');
+//const regex = require('../utils/regex');
 const {
   getUsers,
   getInfoAboutUser,
@@ -29,7 +30,8 @@ userRouter.patch('/users/me', celebrate({
 
 userRouter.patch('/users/me/avatar', celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().required().pattern(regex),
+    //avatar: Joi.string().required().pattern(regex),
+    avatar: Joi.string().required(),
   }),
 }), updateUserAvatar);
 
